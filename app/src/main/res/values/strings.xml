@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Film+App</string>
+    <string name="film">FILM</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="auth_home_button_login">INICIAR SESIÓN</string>
+    <string name="auth_home_button_signup">REGISTRARSE</string>
+    <string name="auth_signup_name">Nombre</string>
+    <string name="auth_signup_mail">Correo Electrónico</string>
+    <string name="auth_signup_password">Contraseña</string>
+    <string name="auth_signup_confirm_pass">Confirmar contraseña</string>
+    <string name="auth_signup_title">Registrar Usuario</string>
+</resources>
