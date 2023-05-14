@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/authHomeFragment"
+    >
+
+    <fragment
+        android:id="@+id/authHomeFragment"
+        android:name="org.bedu.filmapp.ui.auth_home.AuthHomeFragment"
+        android:label="fragment_auth_home"
+        tools:layout="@layout/fragment_auth_home" >
+        <action
+            android:id="@+id/action_authHomeFragment_to_authLoginFragment"
+            app:destination="@id/authLoginFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
+            />
+        <action
+            android:id="@+id/action_authHomeFragment_to_authSignupFragment"
+            app:destination="@id/authSignupFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
+            />
+    </fragment>
+    <fragment
+        android:id="@+id/authLoginFragment"
+        android:name="org.bedu.filmapp.ui.auth_login.AuthLoginFragment"
+        android:label="fragment_auth_login"
+        tools:layout="@layout/fragment_auth_login" />
+    <fragment
+        android:id="@+id/authSignupFragment"
+        android:name="org.bedu.filmapp.ui.auth_signup.AuthSignupFragment"
+        android:label="fragment_auth_signup"
+        tools:layout="@layout/fragment_auth_signup" />
+</navigation>
