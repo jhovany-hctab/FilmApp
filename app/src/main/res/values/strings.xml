@@ -10,4 +10,15 @@
     <string name="auth_signup_password">Contraseña</string>
     <string name="auth_signup_confirm_pass">Confirmar contraseña</string>
     <string name="auth_signup_title">Registrar Usuario</string>
+    <string name="auth_login_email_error">Esperado: ejemplo@proveedor.com</string>
+    <string name="auth_login_email_success">Correo con formato correcto!</string>
+    <string name="auth_login_pass_error">Esperado al menos 6 caracteres</string>
+    <string name="auth_login_pass_success">Contraseña con formato correcto!</string>
+    <string name="auth_login_btn_error">Complete los campos para continuar!</string>
+
+    <string name="auth_signup_name_success">Formato de nombre correcto!</string>
+    <string name="auth_signup_name_error">Esperando almenos 5 caracteres!</string>
+    <string name="auth_signup_pass_confirm_success">Las contraseñas coinciden!</string>
+    <string name="auth_signup_pass_confirm_error">Las contraseñas NO coinciden!</string>
+    <string name="auth_signup_btn_error">Complete los campos para continuar!</string>
 </resources>

@@ -54,10 +54,12 @@
             layout="@layout/default_title_app"/>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/email_il"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/auth_signup_mail"
             android:layout_marginBottom="24dp"
+            app:boxStrokeErrorColor="@color/red_700"
             app:shapeAppearance="@style/ShapeAppearance.Material3.MediumComponent"
             app:startIconDrawable="@drawable/baseline_mail_24"
             app:startIconContentDescription=""
@@ -66,20 +68,20 @@
             >
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/email_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textEmailAddress"
-                android:text="@{AuthLoginViewModel.email}"
                 />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/password_il"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/auth_signup_password"
             android:layout_marginBottom="24dp"
+            app:boxStrokeErrorColor="@color/red_700"
             app:shapeAppearance="@style/ShapeAppearance.Material3.MediumComponent"
             app:startIconDrawable="@drawable/baseline_lock_24"
             app:startIconContentDescription=""
@@ -90,6 +92,7 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="textPassword"
                 />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -107,6 +110,7 @@
         app:cardElevation="5dp"
         >
         <RelativeLayout
+            android:id="@+id/login_btn_rl"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/red_700"

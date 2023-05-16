@@ -3,7 +3,14 @@
     <style name="Base.Theme.FilmApp" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-        <item name="colorPrimary">@color/red_700</item>
+        <item name="colorPrimary">@color/black</item>
+        <item name="textInputStyle">@style/ThemeOverlay.App.TextInputLayout</item>
+    </style>
+
+    <style name="ThemeOverlay.App.TextInputLayout" parent="" >
+        <item name="colorPrimary">@color/black</item>
+        <item name="colorOnSurface">@color/black</item>
+        <item name="colorError">@color/red_700</item>
     </style>
 
     <style name="Theme.FilmApp" parent="Base.Theme.FilmApp" />

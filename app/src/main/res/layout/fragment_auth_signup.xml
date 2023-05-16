@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_auth_login_singup"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.auth_signup.AuthSignupFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -53,10 +52,12 @@
             layout="@layout/default_title_app"/>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/name_il"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/auth_signup_name"
             android:layout_marginBottom="24dp"
+            app:boxStrokeErrorColor="@color/red_700"
             app:shapeAppearance="@style/ShapeAppearance.Material3.MediumComponent"
             app:startIconDrawable="@drawable/baseline_face_24"
             app:startIconContentDescription=""
@@ -73,10 +74,12 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/email_il"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/auth_signup_mail"
             android:layout_marginBottom="24dp"
+            app:boxStrokeErrorColor="@color/red_700"
             app:shapeAppearance="@style/ShapeAppearance.Material3.MediumComponent"
             app:startIconDrawable="@drawable/baseline_mail_24"
             app:startIconContentDescription=""
@@ -93,10 +96,12 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/password_il"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/auth_signup_password"
             android:layout_marginBottom="24dp"
+            app:boxStrokeErrorColor="@color/red_700"
             app:shapeAppearance="@style/ShapeAppearance.Material3.MediumComponent"
             app:startIconDrawable="@drawable/baseline_lock_24"
             app:startIconContentDescription=""
@@ -107,15 +112,18 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="textPassword"
                 />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/password_confirm_il"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/auth_signup_confirm_pass"
             android:layout_marginBottom="24dp"
+            app:boxStrokeErrorColor="@color/red_700"
             app:shapeAppearance="@style/ShapeAppearance.Material3.MediumComponent"
             app:startIconDrawable="@drawable/baseline_lock_24"
             app:startIconContentDescription=""
@@ -126,6 +134,7 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="textPassword"
                 />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -142,9 +151,13 @@
         app:cardElevation="5dp"
         >
         <RelativeLayout
+            android:id="@+id/signup_button_rl"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/red_700"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:selectableItemBackgroundBorderless"
             >
             <ImageView
                 android:layout_width="wrap_content"
