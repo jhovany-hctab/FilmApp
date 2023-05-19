@@ -2,12 +2,29 @@ package org.bedu.filmapp.ui.auth_signup
 
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import org.bedu.filmapp.domain.model.Response
+import org.bedu.filmapp.domain.model.User
+import org.bedu.filmapp.domain.use_cases.auth.AuthUseCases
+import org.bedu.filmapp.domain.use_cases.user.UserUseCases
 import javax.inject.Inject
 
 @HiltViewModel
-class AuthSignupViewModel @Inject constructor(): ViewModel() {
+class AuthSignupViewModel @Inject constructor(
+    private val authUseCases: AuthUseCases,
+    private val userUseCases: UserUseCases
+): ViewModel() {
+
+    //SIGNUP RESPONSE
+    var singUpResponse = MutableStateFlow<Response<FirebaseUser>?>(null)
+        private set
+    //CREATE RESPONSE
+    var createUserResponse = MutableStateFlow<Response<Boolean>?>(null)
+    var user = User()
 
     var state = MutableStateFlow(AuthSignupState())
 
@@ -46,6 +63,26 @@ class AuthSignupViewModel @Inject constructor(): ViewModel() {
                 isEmailValid.value ?: false &&
                 isPasswordValid.value ?: false &&
                 isPasswordConfirmValid.value ?: false
+    }
+
+    fun onSignup() {
+        user.username = state.value.name
+        user.email = state.value.email
+        user.password = state.value.password
+        signup(user)
+    }
+
+    private fun signup(user: User) = viewModelScope.launch{
+        singUpResponse.value = Response.Loading
+        val result = authUseCases.authSignup(user)
+        singUpResponse.value = result
+    }
+
+    fun createUser() = viewModelScope.launch {
+        createUserResponse.value = Response.Loading
+        user.id = authUseCases.getCurrentUser()!!.uid
+        val result = userUseCases.userCreate(user)
+        createUserResponse.value = result
     }
 
 }

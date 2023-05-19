@@ -1,13 +1,10 @@
-package org.bedu.filmapp.ui.auth_home
+package org.bedu.filmapp.ui.home
 
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RelativeLayout
-import android.widget.Toast
-import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
 import org.bedu.filmapp.R
 
 // TODO: Rename parameter arguments, choose names that match
@@ -17,16 +14,13 @@ private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
- * Use the [AuthHomeFragment.newInstance] factory method to
+ * Use the [HomeFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class AuthHomeFragment : Fragment() {
+class HomeFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-
-    private lateinit var loginButton: RelativeLayout
-    private lateinit var signupButton: RelativeLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,18 +35,7 @@ class AuthHomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_auth_home, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        loginButton = view.findViewById(R.id.login_button_rl)
-        signupButton = view.findViewById(R.id.signup_button_rl)
-
-        loginButton.setOnClickListener {it.findNavController().navigate(R.id.action_authHomeFragment_to_authLoginFragment)}
-        signupButton.setOnClickListener {it.findNavController().navigate(R.id.action_authHomeFragment_to_authSignupFragment)}
-
+        return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
     companion object {
@@ -62,12 +45,12 @@ class AuthHomeFragment : Fragment() {
          *
          * @param param1 Parameter 1.
          * @param param2 Parameter 2.
-         * @return A new instance of fragment AuthHomeFragment.
+         * @return A new instance of fragment HomeFragment.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            AuthHomeFragment().apply {
+            HomeFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
                     putString(ARG_PARAM2, param2)

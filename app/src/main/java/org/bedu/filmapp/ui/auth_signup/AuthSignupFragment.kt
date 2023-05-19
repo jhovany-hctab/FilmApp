@@ -4,19 +4,21 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.bedu.filmapp.R
+import org.bedu.filmapp.domain.model.Response
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -39,6 +41,7 @@ class AuthSignupFragment : Fragment() {
     private lateinit var passwordInputLayout: TextInputLayout
     private lateinit var passwordConfirmInputLayout: TextInputLayout
     private lateinit var signupButton: RelativeLayout
+    private lateinit var progressBar: ProgressBar
 
     private val viewModel by viewModels<AuthSignupViewModel>()
 
@@ -57,6 +60,7 @@ class AuthSignupFragment : Fragment() {
         passwordInputLayout = view.findViewById(R.id.password_il)
         passwordConfirmInputLayout = view.findViewById(R.id.password_confirm_il)
         signupButton = view.findViewById(R.id.signup_button_rl)
+        progressBar = view.findViewById(R.id.progress_bar)
 
         nameInputLayout.editText?.doOnTextChanged { text, start, before, count ->
             if (viewModel.onNameInput(text.toString())) {
@@ -94,9 +98,41 @@ class AuthSignupFragment : Fragment() {
 
         signupButton.setOnClickListener {
             if (viewModel.validateButton()) {
-                Toast.makeText(context, "Guardado", Toast.LENGTH_SHORT).show()
+                signupButton.isEnabled = false
+                viewModel.onSignup()
             } else {
                 Toast.makeText(context, getString(R.string.auth_login_btn_error), Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            launch {
+                viewModel.singUpResponse.collect() {
+                    when(it) {
+                        Response.Loading -> progressBar.visibility = View.VISIBLE
+                        is Response.Success -> viewModel.createUser()//findNavController().navigate(R.id.action_authHomeFragment_to_authLoginFragment)
+                        is Response.Failure -> {
+                            progressBar.visibility = View.GONE
+                            signupButton.isEnabled = true
+                            Toast.makeText(context, it.e.message ?: getString(R.string.auth_login_error), Toast.LENGTH_SHORT).show()
+                        }
+                        else -> {}
+                    }
+                }
+            }
+            launch {
+                viewModel.createUserResponse.collect() {
+                    when(it) {
+                        Response.Loading -> progressBar.visibility = View.VISIBLE
+                        is Response.Success -> findNavController().navigate(R.id.action_global_homeFragment)
+                        is Response.Failure -> {
+                            progressBar.visibility = View.GONE
+                            signupButton.isEnabled = true
+                            Toast.makeText(context, it.e.message ?: getString(R.string.auth_login_error), Toast.LENGTH_SHORT).show()
+                        }
+                        else -> {}
+                    }
+                }
             }
         }
 
