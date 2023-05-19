@@ -124,7 +124,7 @@ class AuthSignupFragment : Fragment() {
                 viewModel.createUserResponse.collect() {
                     when(it) {
                         Response.Loading -> progressBar.visibility = View.VISIBLE
-                        is Response.Success -> findNavController().navigate(R.id.action_global_homeFragment)
+                        is Response.Success -> findNavController().navigate(R.id.action_authSignupFragment_to_homeFragment)
                         is Response.Failure -> {
                             progressBar.visibility = View.GONE
                             signupButton.isEnabled = true

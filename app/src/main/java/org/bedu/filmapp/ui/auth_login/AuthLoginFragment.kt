@@ -84,7 +84,7 @@ class AuthLoginFragment : Fragment() {
             viewModel.loginResponse.collect() {
                 when(it) {
                     Response.Loading -> progressBar.visibility = View.VISIBLE
-                    is Response.Success -> findNavController().navigate(R.id.action_global_homeFragment)
+                    is Response.Success -> findNavController().navigate(R.id.action_authLoginFragment_to_homeFragment)
                     is Response.Failure -> {
                         progressBar.visibility = View.GONE
                         login.isEnabled = true
