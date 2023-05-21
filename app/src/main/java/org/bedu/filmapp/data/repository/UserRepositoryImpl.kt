@@ -1,6 +1,9 @@
 package org.bedu.filmapp.data.repository
 
 import com.google.firebase.firestore.CollectionReference
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import org.bedu.filmapp.core.Constants.USERS
 import org.bedu.filmapp.domain.model.Response
@@ -20,6 +23,36 @@ class UserRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             e.printStackTrace()
             Response.Failure(e)
+        }
+    }
+
+    override fun getUserById(id: String): Flow<Response<User?>> = callbackFlow {
+        val snapshotListener = collectionReference.document(id).addSnapshotListener{ snapshot, e ->
+            val userResponse = if (snapshot != null) {
+                val user = snapshot.toObject(User::class.java)
+                Response.Success(user)
+            } else {
+                Response.Failure((e ?: "error desconocido") as Exception)
+            }
+            trySend(userResponse)
+        }
+        awaitClose {
+            snapshotListener.remove()
+        }
+    }
+
+    override fun getUsers(): Flow<Response<List<User>>> = callbackFlow{
+        val snapshotListener = collectionReference.addSnapshotListener{ snapshot, e ->
+            val usersResponse = if (snapshot != null) {
+                val users = snapshot.toObjects(User::class.java)
+                Response.Success(users)
+            } else {
+                Response.Failure((e ?: "error desconocido") as Exception)
+            }
+            trySend(usersResponse)
+        }
+        awaitClose {
+            snapshotListener.remove()
         }
     }
 }

@@ -11,7 +11,9 @@ import androidx.annotation.StringRes
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
@@ -105,32 +107,34 @@ class AuthSignupFragment : Fragment() {
             }
         }
 
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            launch {
-                viewModel.singUpResponse.collect() {
-                    when(it) {
-                        Response.Loading -> progressBar.visibility = View.VISIBLE
-                        is Response.Success -> viewModel.createUser()//findNavController().navigate(R.id.action_authHomeFragment_to_authLoginFragment)
-                        is Response.Failure -> {
-                            progressBar.visibility = View.GONE
-                            signupButton.isEnabled = true
-                            Toast.makeText(context, it.e.message ?: getString(R.string.auth_login_error), Toast.LENGTH_SHORT).show()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.singUpResponse.collect() {
+                        when(it) {
+                            Response.Loading -> progressBar.visibility = View.VISIBLE
+                            is Response.Success -> viewModel.createUser()//findNavController().navigate(R.id.action_authHomeFragment_to_authLoginFragment)
+                            is Response.Failure -> {
+                                progressBar.visibility = View.GONE
+                                signupButton.isEnabled = true
+                                Toast.makeText(context, it.e.message ?: getString(R.string.auth_login_error), Toast.LENGTH_SHORT).show()
+                            }
+                            else -> {}
                         }
-                        else -> {}
                     }
                 }
-            }
-            launch {
-                viewModel.createUserResponse.collect() {
-                    when(it) {
-                        Response.Loading -> progressBar.visibility = View.VISIBLE
-                        is Response.Success -> findNavController().navigate(R.id.action_authSignupFragment_to_homeFragment)
-                        is Response.Failure -> {
-                            progressBar.visibility = View.GONE
-                            signupButton.isEnabled = true
-                            Toast.makeText(context, it.e.message ?: getString(R.string.auth_login_error), Toast.LENGTH_SHORT).show()
+                launch {
+                    viewModel.createUserResponse.collect() {
+                        when(it) {
+                            Response.Loading -> progressBar.visibility = View.VISIBLE
+                            is Response.Success -> findNavController().navigate(R.id.action_authSignupFragment_to_homeFragment)
+                            is Response.Failure -> {
+                                progressBar.visibility = View.GONE
+                                signupButton.isEnabled = true
+                                Toast.makeText(context, it.e.message ?: getString(R.string.auth_login_error), Toast.LENGTH_SHORT).show()
+                            }
+                            else -> {}
                         }
-                        else -> {}
                     }
                 }
             }

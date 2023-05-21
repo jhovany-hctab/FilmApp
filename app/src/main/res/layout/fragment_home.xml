@@ -1,14 +1,192 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/background_home"
     tools:context=".ui.home.HomeFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center_vertical"
+            >
+            <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+            app:cardCornerRadius="360dp"
+            android:elevation="5dp"
+            >
+                <ImageView
+                    android:id="@+id/image_profile_iv"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:scaleType="centerCrop"/>
+        </androidx.cardview.widget.CardView>
 
-</FrameLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/search_il"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Buscar"
+                app:boxStrokeErrorColor="@color/red_700"
+                app:shapeAppearance="@style/ShapeAppearance.Material3.MediumComponent"
+                app:startIconDrawable="@drawable/baseline_search_24"
+                app:startIconContentDescription=""
+                app:endIconMode="clear_text"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                >
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    />
+
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:text="ULTIMOS USUARIOS"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/preview_user_sfl"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:visibility="gone"
+                >
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    >
+                    <include layout="@layout/item_user"/>
+                    <include layout="@layout/item_user"/>
+                    <include layout="@layout/item_user"/>
+                    <include layout="@layout/item_user"/>
+                    <include layout="@layout/item_user"/>
+                    <include layout="@layout/item_user"/>
+                </LinearLayout>
+            </com.facebook.shimmer.ShimmerFrameLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/users_rv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:orientation="horizontal"
+                tools:listitem="@layout/item_user"
+                />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:text="POPULARES"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/preview_pop_sfl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                >
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    >
+                    <include layout="@layout/item_post"/>
+                    <include layout="@layout/item_post"/>
+                    <include layout="@layout/item_post"/>
+                    <include layout="@layout/item_post"/>
+                    <include layout="@layout/item_post"/>
+                    <include layout="@layout/item_post"/>
+                </LinearLayout>
+            </com.facebook.shimmer.ShimmerFrameLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/post_popular_rv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:orientation="horizontal"
+                tools:listitem="@layout/item_post"
+                />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:text="MIS FAVORITOS"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/preview_favorite_sfl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                >
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    >
+                    <include layout="@layout/item_post"/>
+                    <include layout="@layout/item_post"/>
+                    <include layout="@layout/item_post"/>
+                    <include layout="@layout/item_post"/>
+                    <include layout="@layout/item_post"/>
+                    <include layout="@layout/item_post"/>
+                </LinearLayout>
+            </com.facebook.shimmer.ShimmerFrameLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/post_favorite_rv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:orientation="horizontal"
+                tools:listitem="@layout/item_post"
+                />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

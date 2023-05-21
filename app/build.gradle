@@ -57,6 +57,12 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment:2.5.3'
     kapt("com.google.dagger:hilt-android-compiler:2.44")
 
+    //Picasso
+    implementation 'com.squareup.picasso:picasso:2.8'
+
+    //Shimmer Facebook
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
+
     //Navigation component
     var nav_version = "2.5.3"
     // Kotlin

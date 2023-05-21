@@ -5,5 +5,7 @@ data class User(
     var username: String = "",
     var email: String = "",
     var password: String = "",
-    var imageProfile: String = ""
+    var description: String = "",
+    var imageProfile: String = "",
+    var imagePortedProfile: String = ""
 )

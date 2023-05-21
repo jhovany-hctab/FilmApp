@@ -10,17 +10,26 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import org.bedu.filmapp.core.Constants.POSTS
 import org.bedu.filmapp.core.Constants.USERS
 import org.bedu.filmapp.data.repository.AuthRepositoryImpl
+import org.bedu.filmapp.data.repository.PostRepositoryImpl
 import org.bedu.filmapp.data.repository.UserRepositoryImpl
 import org.bedu.filmapp.domain.repository.AuthRepository
+import org.bedu.filmapp.domain.repository.PostRepository
 import org.bedu.filmapp.domain.repository.UserRepository
 import org.bedu.filmapp.domain.use_cases.auth.AuthLogin
 import org.bedu.filmapp.domain.use_cases.auth.AuthSignup
 import org.bedu.filmapp.domain.use_cases.auth.AuthUseCases
 import org.bedu.filmapp.domain.use_cases.auth.GetCurrentUser
+import org.bedu.filmapp.domain.use_cases.post.PostGetData
+import org.bedu.filmapp.domain.use_cases.post.PostUseCases
+import org.bedu.filmapp.domain.use_cases.post.PostsGet
 import org.bedu.filmapp.domain.use_cases.user.UserCreate
+import org.bedu.filmapp.domain.use_cases.user.UserGetUserById
 import org.bedu.filmapp.domain.use_cases.user.UserUseCases
+import org.bedu.filmapp.domain.use_cases.user.UsersGet
+import org.checkerframework.checker.regex.qual.PolyRegex
 import javax.inject.Named
 
 @InstallIn(SingletonComponent::class)
@@ -42,7 +51,18 @@ object AppModule {
 
     @Provides
     fun provideUserUseCases(repository: UserRepository) = UserUseCases(
-        userCreate = UserCreate(repository)
+        userCreate = UserCreate(repository),
+        userById = UserGetUserById(repository),
+        usersGet = UsersGet(repository)
+    )
+
+    @Provides
+    fun providePostRepository(impl: PostRepositoryImpl): PostRepository = impl
+
+    @Provides
+    fun providePostUseCases(repository: PostRepository) = PostUseCases(
+        postsGet = PostsGet(repository),
+        postGetData = PostGetData(repository)
     )
 
     @Provides
@@ -53,6 +73,9 @@ object AppModule {
     @Provides
     @Named(USERS)
     fun provideUserRef(db: FirebaseFirestore): CollectionReference = db.collection(USERS)
+    @Provides
+    @Named(POSTS)
+    fun providePostRef(db: FirebaseFirestore): CollectionReference = db.collection(POSTS)
 
 
 
