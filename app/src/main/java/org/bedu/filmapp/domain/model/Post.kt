@@ -11,5 +11,7 @@ data class Post(
     var createdBy: String = "",
     var imagePost: String = "",
     var imagePortedPost: String = "",
-    var likes: ArrayList<String> = ArrayList()
+    var likes: ArrayList<String> = ArrayList(),
+    var favorites: ArrayList<String> = ArrayList(),
+    var watch: ArrayList<String> = ArrayList()
 )

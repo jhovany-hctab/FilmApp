@@ -10,7 +10,7 @@ import javax.inject.Inject
 class SplashScreenViewModel @Inject constructor(private val authUseCases: AuthUseCases): ViewModel() {
 
     var sesionResponse = MutableStateFlow(false)
-    private val currentUser = authUseCases.getCurrentUser()!!.uid
+    private val currentUser = authUseCases.getCurrentUser()?.uid
 
     init {
         if (currentUser != null) {

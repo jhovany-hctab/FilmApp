@@ -1,10 +1,13 @@
 package org.bedu.filmapp.ui.post_details
 
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -46,6 +49,13 @@ class PostDetailsFragment : Fragment() {
     private lateinit var genderTextView: TextView
     private lateinit var descriptionTextView: TextView
     private lateinit var reviewsRecyclerView: RecyclerView
+    private lateinit var likePostImageView: ImageView
+    private lateinit var likeDeletePostImageView: ImageView
+    private lateinit var likeCountTextView: TextView
+    private lateinit var favoritePostButton: Button
+    private lateinit var favoriteDeletePostButton: Button
+    private lateinit var watchPostButton: Button
+    private lateinit var watchDeletePostButton: Button
 
     private val viewModel by viewModels<PostDetailsViewModel>()
 
@@ -73,12 +83,29 @@ class PostDetailsFragment : Fragment() {
         genderTextView = view.findViewById(R.id.gender_tv)
         descriptionTextView = view.findViewById(R.id.description_tv)
         reviewsRecyclerView = view.findViewById(R.id.post_reviews_rv)
+        likePostImageView = view.findViewById(R.id.like_post_iv)
+        likeDeletePostImageView = view.findViewById(R.id.like_delete_post_iv)
+        likeCountTextView = view.findViewById(R.id.count_likes_tv)
+        favoritePostButton = view.findViewById(R.id.favorite_btn)
+        favoriteDeletePostButton = view.findViewById(R.id.favorite_delete_btn)
+        watchPostButton = view.findViewById(R.id.watch_btn)
+        watchDeletePostButton = view.findViewById(R.id.watch_delete_btn)
+
 
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        likePostImageView.setOnClickListener { viewModel.like() }
+        likeDeletePostImageView.setOnClickListener { viewModel.likeDelete() }
+
+        favoritePostButton.setOnClickListener { viewModel.favorite() }
+        favoriteDeletePostButton.setOnClickListener { viewModel.favoriteDelete() }
+
+        watchPostButton.setOnClickListener { viewModel.watch() }
+        watchDeletePostButton.setOnClickListener { viewModel.watchDelete() }
 
         lifecycleScope.launch{
             viewModel.postDetailsResponse.collect() {
@@ -94,6 +121,37 @@ class PostDetailsFragment : Fragment() {
                         genderTextView.text = it.data?.gender
                         descriptionTextView.text = it.data?.description
                         progressLinearProgressIndicator.visibility = View.GONE
+                        likeCountTextView.text = if (it.data?.likes != null){it.data.likes.size.toString()} else {"0"}
+
+                        if (it.data?.likes != null){
+                            if (it.data?.likes?.contains(viewModel.user) == true) {
+                                likeDeletePostImageView.visibility = View.VISIBLE
+                                likePostImageView.visibility = View.GONE
+                            } else {
+                                likeDeletePostImageView.visibility = View.GONE
+                                likePostImageView.visibility = View.VISIBLE
+                            }
+                        } else {likePostImageView.visibility = View.VISIBLE}
+
+                        if (it.data?.favorites != null){
+                            if (it.data?.favorites?.contains(viewModel.user) == true) {
+                                favoriteDeletePostButton.visibility = View.VISIBLE
+                                favoritePostButton.visibility = View.GONE
+                            } else {
+                                favoriteDeletePostButton.visibility = View.GONE
+                                favoritePostButton.visibility = View.VISIBLE
+                            }
+                        } else {favoritePostButton.visibility = View.VISIBLE}
+
+                        if (it.data?.watch != null){
+                            if (it.data?.watch?.contains(viewModel.user) == true) {
+                                watchDeletePostButton.visibility = View.VISIBLE
+                                watchPostButton.visibility = View.GONE
+                            } else {
+                                watchDeletePostButton.visibility = View.GONE
+                                watchPostButton.visibility = View.VISIBLE
+                            }
+                        } else {watchPostButton.visibility = View.VISIBLE}
                     }
                     is Response.Failure -> {
                         Toast.makeText(context, it.e.message ?: getString(R.string.auth_login_error), Toast.LENGTH_SHORT).show()

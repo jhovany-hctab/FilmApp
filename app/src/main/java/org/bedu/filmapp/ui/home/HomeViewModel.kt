@@ -25,20 +25,23 @@ class HomeViewModel @Inject constructor(
     var userDataResponse = MutableStateFlow<Response<User?>?>(null)
     var usersResponse = MutableStateFlow<Response<List<User>>?>(null)
     var postPopResponse = MutableStateFlow<Response<List<Post>>?>(null)
+    var postFavoriteResponse = MutableStateFlow<Response<List<Post>>?>(null)
+
+    val userCurrent = authUseCases.getCurrentUser()!!.uid
 
     init {
         getUserById()
     }
     private fun getUserById() = viewModelScope.launch {
         userDataResponse.value = Response.Loading
-        userUseCases.userById(authUseCases.getCurrentUser()!!.uid)
+        userUseCases.userById(userCurrent)
             .collect() {
                 userDataResponse.value = it
             }
     }
     fun getUsers() = viewModelScope.launch {
         usersResponse.value = Response.Loading
-        userUseCases.usersGet()
+        userUseCases.usersGet(userCurrent)
             .collect() {
                 usersResponse.value = it
             }
@@ -48,6 +51,13 @@ class HomeViewModel @Inject constructor(
         postUseCases.postsGet()
             .collect() {
                 postPopResponse.value = it
+            }
+    }
+    fun getFavoritePosts() = viewModelScope.launch {
+        postFavoriteResponse.value = Response.Loading
+        postUseCases.postFavorite(userCurrent)
+            .collect() {
+                postFavoriteResponse.value = it
             }
     }
 }

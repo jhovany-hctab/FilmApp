@@ -7,5 +7,6 @@ data class User(
     var password: String = "",
     var description: String = "",
     var imageProfile: String = "",
-    var imagePortedProfile: String = ""
+    var imagePortedProfile: String = "",
+    var follow: ArrayList<String> = ArrayList()
 )

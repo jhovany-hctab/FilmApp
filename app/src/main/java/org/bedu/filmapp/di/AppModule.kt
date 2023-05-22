@@ -19,13 +19,23 @@ import org.bedu.filmapp.domain.repository.AuthRepository
 import org.bedu.filmapp.domain.repository.PostRepository
 import org.bedu.filmapp.domain.repository.UserRepository
 import org.bedu.filmapp.domain.use_cases.auth.AuthLogin
+import org.bedu.filmapp.domain.use_cases.auth.AuthLogout
 import org.bedu.filmapp.domain.use_cases.auth.AuthSignup
 import org.bedu.filmapp.domain.use_cases.auth.AuthUseCases
 import org.bedu.filmapp.domain.use_cases.auth.GetCurrentUser
+import org.bedu.filmapp.domain.use_cases.post.PostAddFavorite
+import org.bedu.filmapp.domain.use_cases.post.PostAddWatch
+import org.bedu.filmapp.domain.use_cases.post.PostFavorite
 import org.bedu.filmapp.domain.use_cases.post.PostGetData
+import org.bedu.filmapp.domain.use_cases.post.PostLike
+import org.bedu.filmapp.domain.use_cases.post.PostLikeDelete
+import org.bedu.filmapp.domain.use_cases.post.PostRemoveFavorite
+import org.bedu.filmapp.domain.use_cases.post.PostRemoveWatch
 import org.bedu.filmapp.domain.use_cases.post.PostUseCases
 import org.bedu.filmapp.domain.use_cases.post.PostsGet
 import org.bedu.filmapp.domain.use_cases.user.UserCreate
+import org.bedu.filmapp.domain.use_cases.user.UserFollow
+import org.bedu.filmapp.domain.use_cases.user.UserFollowDelete
 import org.bedu.filmapp.domain.use_cases.user.UserGetUserById
 import org.bedu.filmapp.domain.use_cases.user.UserUseCases
 import org.bedu.filmapp.domain.use_cases.user.UsersGet
@@ -43,7 +53,8 @@ object AppModule {
     fun provideAuthUseCases(repository: AuthRepository) = AuthUseCases(
         getCurrentUser = GetCurrentUser(repository),
         authLogin = AuthLogin(repository),
-        authSignup = AuthSignup(repository)
+        authSignup = AuthSignup(repository),
+        logout = AuthLogout(repository)
     )
 
     @Provides
@@ -53,7 +64,9 @@ object AppModule {
     fun provideUserUseCases(repository: UserRepository) = UserUseCases(
         userCreate = UserCreate(repository),
         userById = UserGetUserById(repository),
-        usersGet = UsersGet(repository)
+        usersGet = UsersGet(repository),
+        userFollow = UserFollow(repository),
+        userFollowDelete = UserFollowDelete(repository)
     )
 
     @Provides
@@ -62,7 +75,14 @@ object AppModule {
     @Provides
     fun providePostUseCases(repository: PostRepository) = PostUseCases(
         postsGet = PostsGet(repository),
-        postGetData = PostGetData(repository)
+        postGetData = PostGetData(repository),
+        postLike = PostLike(repository),
+        postLikeDelete = PostLikeDelete(repository),
+        postAddFavorite = PostAddFavorite(repository),
+        postRemoveFavorite = PostRemoveFavorite(repository),
+        postAddWatch = PostAddWatch(repository),
+        postRemoveWatch = PostRemoveWatch(repository),
+        postFavorite = PostFavorite(repository)
     )
 
     @Provides

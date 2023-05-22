@@ -27,8 +27,29 @@ class ProfileUsersViewModel @Inject constructor(
     var userDataResponse = MutableStateFlow<Response<User?>?>(null)
     var postPopResponse = MutableStateFlow<Response<List<Post>>?>(null)
 
+    var followResponse = MutableStateFlow<Response<Boolean>?>(null)
+    var followDeleteResponse = MutableStateFlow<Response<Boolean>?>(null)
+
+    var postFavoriteResponse = MutableStateFlow<Response<List<Post>>?>(null)
+
+    val user = authUseCases.getCurrentUser()!!.uid
+
     init {
         getUserById()
+    }
+
+    fun follow() = viewModelScope.launch {
+        followResponse.value = Response.Loading
+        val result = userUseCases.userFollow(user!!, userId!!)
+        followResponse.value = result
+
+    }
+
+    fun followDelete() = viewModelScope.launch {
+        followDeleteResponse.value = Response.Loading
+        val result = userUseCases.userFollowDelete(user!!, userId!!)
+        followDeleteResponse.value = result
+
     }
     private fun getUserById() = viewModelScope.launch {
         userDataResponse.value = Response.Loading
@@ -42,6 +63,14 @@ class ProfileUsersViewModel @Inject constructor(
         postUseCases.postsGet()
             .collect() {
                 postPopResponse.value = it
+            }
+    }
+
+    fun getFavoritePosts(idUser: String? = null) = viewModelScope.launch {
+        postFavoriteResponse.value = Response.Loading
+        postUseCases.postFavorite(idUser!!)
+            .collect() {
+                postFavoriteResponse.value = it
             }
     }
 }

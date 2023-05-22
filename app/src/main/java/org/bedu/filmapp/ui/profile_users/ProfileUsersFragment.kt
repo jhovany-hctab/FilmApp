@@ -6,12 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.cardview.widget.CardView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.squareup.picasso.Picasso
@@ -46,6 +50,10 @@ class ProfileUsersFragment : Fragment() {
     private lateinit var myActivityRecyclerView: RecyclerView
     private lateinit var previewFavoriteShimmerFrameLayout: ShimmerFrameLayout
     private lateinit var previewActivityShimmerFrameLayout: ShimmerFrameLayout
+    private lateinit var followCardView: CardView
+    private lateinit var followDeleteCardView: CardView
+    private lateinit var followRelativeLayout: RelativeLayout
+    private lateinit var followDeleteRelativeLayout: RelativeLayout
 
     private val viewModel by viewModels<ProfileUsersViewModel>()
 
@@ -76,6 +84,13 @@ class ProfileUsersFragment : Fragment() {
         myActivityRecyclerView = view.findViewById(R.id.activity_rv)
         previewFavoriteShimmerFrameLayout = view.findViewById(R.id.preview_favorite_sfl)
         previewActivityShimmerFrameLayout = view.findViewById(R.id.preview_activity_sfl)
+        followCardView = view.findViewById(R.id.follow_btn_cv)
+        followDeleteCardView = view.findViewById(R.id.follow_delete_btn_cv)
+        followRelativeLayout = view.findViewById(R.id.follow_btn_rl)
+        followDeleteRelativeLayout = view.findViewById(R.id.follow_delete_btn_rl)
+
+        followRelativeLayout.setOnClickListener { viewModel.follow() }
+        followDeleteRelativeLayout.setOnClickListener { viewModel.followDelete() }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -90,7 +105,41 @@ class ProfileUsersFragment : Fragment() {
                                 Picasso.get().load(it.data?.imageProfile).into(profileImageView)
                                 nameTextView.text = it.data?.username
                                 descriptionTextView.text = it.data?.description
+                                if (it.data?.follow != null){
+                                    if (it.data?.follow?.contains(viewModel.user) == true) {
+                                        followDeleteCardView.visibility = View.VISIBLE
+                                        followCardView.visibility = View.GONE
+                                    } else {
+                                        followDeleteCardView.visibility = View.GONE
+                                        followCardView.visibility = View.VISIBLE
+                                    }
+                                } else {followCardView.visibility = View.VISIBLE}
+
+                                viewModel.getFavoritePosts(it.data?.id)
+                            }
+                            is Response.Failure -> {
+                                Toast.makeText(context, it.e.message ?: getString(R.string.auth_login_error), Toast.LENGTH_SHORT).show()
+                            }
+                            else -> {}
+                        }
+                    }
+                }
+                launch {
+                    viewModel.postFavoriteResponse.collect() {
+                        when(it) {
+                            Response.Loading -> {}
+                            is Response.Success -> {
+                                previewFavoriteShimmerFrameLayout.stopShimmer()
+                                previewFavoriteShimmerFrameLayout.visibility = View.GONE
+                                val adapter = PostsAdapter(it.data) { post ->
+                                    if (post != null) {
+                                        val bundle = bundleOf("postId" to post.id)
+                                        findNavController().navigate(R.id.action_profileUsersFragment_to_postDetailsFragment, bundle)
+                                    }
+                                }
+                                myFavoriteRecyclerView.adapter = adapter
                                 viewModel.getPosts()
+
                             }
                             is Response.Failure -> {
                                 Toast.makeText(context, it.e.message ?: getString(R.string.auth_login_error), Toast.LENGTH_SHORT).show()
@@ -104,14 +153,15 @@ class ProfileUsersFragment : Fragment() {
                         when(it) {
                             Response.Loading -> {}
                             is Response.Success -> {
-                                previewFavoriteShimmerFrameLayout.stopShimmer()
-                                previewFavoriteShimmerFrameLayout.visibility = View.GONE
                                 previewActivityShimmerFrameLayout.stopShimmer()
                                 previewActivityShimmerFrameLayout.visibility = View.GONE
-                                val adapter = PostsAdapter(it.data)
-                                myFavoriteRecyclerView.adapter = adapter
+                                val adapter = PostsAdapter(it.data) { post ->
+                                    if (post != null) {
+                                        val bundle = bundleOf("postId" to post.id)
+                                        findNavController().navigate(R.id.action_profileUsersFragment_to_postDetailsFragment, bundle)
+                                    }
+                                }
                                 myActivityRecyclerView.adapter = adapter
-
                             }
                             is Response.Failure -> {
                                 Toast.makeText(context, it.e.message ?: getString(R.string.auth_login_error), Toast.LENGTH_SHORT).show()

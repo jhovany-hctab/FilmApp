@@ -126,12 +126,35 @@ class HomeFragment : Fragment() {
                             Response.Loading -> {
                                 postPopShimmer.visibility = View.VISIBLE
                                 postPopShimmer.startShimmer()
-                                postFavoriteShimmer.visibility = View.VISIBLE
-                                postFavoriteShimmer.startShimmer()
                             }
                             is Response.Success -> {
                                 postPopShimmer.stopShimmer()
                                 postPopShimmer.visibility = View.GONE
+                                val adapter = PostsAdapter(it.data) { post ->
+                                    if (post != null) {
+                                        val bundle = bundleOf("postId" to post.id)
+                                        findNavController().navigate(R.id.action_homeFragment_to_postDetailsFragment, bundle)
+                                    }
+                                }
+                                postPopularRecycler.adapter = adapter
+                                viewModel.getFavoritePosts()
+
+                            }
+                            is Response.Failure -> {
+                                Toast.makeText(context, it.e.message ?: getString(R.string.auth_login_error), Toast.LENGTH_SHORT).show()
+                            }
+                            else -> {}
+                        }
+                    }
+                }
+                launch {
+                    viewModel.postFavoriteResponse.collect() {
+                        when(it) {
+                            Response.Loading -> {
+                                postFavoriteShimmer.visibility = View.VISIBLE
+                                postFavoriteShimmer.startShimmer()
+                            }
+                            is Response.Success -> {
                                 postFavoriteShimmer.stopShimmer()
                                 postFavoriteShimmer.visibility = View.GONE
                                 val adapter = PostsAdapter(it.data) { post ->
@@ -140,7 +163,6 @@ class HomeFragment : Fragment() {
                                         findNavController().navigate(R.id.action_homeFragment_to_postDetailsFragment, bundle)
                                     }
                                 }
-                                postPopularRecycler.adapter = adapter
                                 postFavoriteRecycler.adapter = adapter
 
                             }

@@ -6,12 +6,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.os.bundleOf
+import androidx.fragment.app.findFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.squareup.picasso.Picasso
@@ -44,6 +49,7 @@ class ProfileFragment : Fragment() {
     private lateinit var myActivityRecyclerView: RecyclerView
     private lateinit var previewFavoriteShimmerFrameLayout: ShimmerFrameLayout
     private lateinit var previewActivityShimmerFrameLayout: ShimmerFrameLayout
+    private lateinit var logoutRelativeLayout: RelativeLayout
 
     private val viewModel by viewModels<ProfileViewModel>()
 
@@ -74,9 +80,29 @@ class ProfileFragment : Fragment() {
         myActivityRecyclerView = view.findViewById(R.id.activity_rv)
         previewFavoriteShimmerFrameLayout = view.findViewById(R.id.preview_favorite_sfl)
         previewActivityShimmerFrameLayout = view.findViewById(R.id.preview_activity_sfl)
+        logoutRelativeLayout = view.findViewById(R.id.logout_btn_rl)
+
+
+        logoutRelativeLayout.setOnClickListener {
+            viewModel.logout()
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.logoutResponse.collect() {
+                        when(it) {
+                            Response.Loading -> {}
+                            is Response.Success -> {
+                                findNavController().navigate(R.id.action_profileFragment_to_splashScreenFragment)
+                            }
+                            is Response.Failure -> {
+                                Toast.makeText(context, it.e.message ?: getString(R.string.auth_login_error), Toast.LENGTH_SHORT).show()
+                            }
+                            else -> {}
+                        }
+                    }
+                }
                 launch {
                     viewModel.userDataResponse.collect() {
                         when(it) {
@@ -102,13 +128,39 @@ class ProfileFragment : Fragment() {
                         when(it) {
                             Response.Loading -> {}
                             is Response.Success -> {
-                                previewFavoriteShimmerFrameLayout.stopShimmer()
-                                previewFavoriteShimmerFrameLayout.visibility = View.GONE
                                 previewActivityShimmerFrameLayout.stopShimmer()
                                 previewActivityShimmerFrameLayout.visibility = View.GONE
-                                val adapter = PostsAdapter(it.data)
-                                myFavoriteRecyclerView.adapter = adapter
+                                val adapter = PostsAdapter(it.data) { post ->
+                                    if (post != null) {
+                                        val bundle = bundleOf("postId" to post.id)
+                                        findNavController().navigate(R.id.action_profileUsersFragment_to_postDetailsFragment, bundle)
+                                    }
+                                }
                                 myActivityRecyclerView.adapter = adapter
+                                viewModel.getFavoritePosts()
+
+                            }
+                            is Response.Failure -> {
+                                Toast.makeText(context, it.e.message ?: getString(R.string.auth_login_error), Toast.LENGTH_SHORT).show()
+                            }
+                            else -> {}
+                        }
+                    }
+                }
+                launch {
+                    viewModel.postFavoriteResponse.collect() {
+                        when(it) {
+                            Response.Loading -> {}
+                            is Response.Success -> {
+                                previewFavoriteShimmerFrameLayout.stopShimmer()
+                                previewFavoriteShimmerFrameLayout.visibility = View.GONE
+                                val adapter = PostsAdapter(it.data) { post ->
+                                    if (post != null) {
+                                        val bundle = bundleOf("postId" to post.id)
+                                        findNavController().navigate(R.id.action_profileUsersFragment_to_postDetailsFragment, bundle)
+                                    }
+                                }
+                                myFavoriteRecyclerView.adapter = adapter
 
                             }
                             is Response.Failure -> {

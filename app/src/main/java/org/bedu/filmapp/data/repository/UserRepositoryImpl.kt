@@ -1,6 +1,7 @@
 package org.bedu.filmapp.data.repository
 
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FieldValue
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -41,8 +42,8 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getUsers(): Flow<Response<List<User>>> = callbackFlow{
-        val snapshotListener = collectionReference.addSnapshotListener{ snapshot, e ->
+    override fun getUsers(idUser: String): Flow<Response<List<User>>> = callbackFlow{
+        val snapshotListener = collectionReference.whereNotEqualTo("id",idUser).addSnapshotListener{ snapshot, e ->
             val usersResponse = if (snapshot != null) {
                 val users = snapshot.toObjects(User::class.java)
                 Response.Success(users)
@@ -53,6 +54,26 @@ class UserRepositoryImpl @Inject constructor(
         }
         awaitClose {
             snapshotListener.remove()
+        }
+    }
+
+    override suspend fun follow(idUser: String, idUserFollowing: String): Response<Boolean> {
+        return try {
+            collectionReference.document(idUserFollowing).update("follow", FieldValue.arrayUnion(idUser)).await()
+            Response.Success(true)
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+            Response.Failure(e)
+        }
+    }
+
+    override suspend fun followDelete(idUser: String, idUserFollowing: String): Response<Boolean> {
+        return try {
+            collectionReference.document(idUserFollowing).update("follow", FieldValue.arrayRemove(idUser)).await()
+            Response.Success(true)
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+            Response.Failure(e)
         }
     }
 }

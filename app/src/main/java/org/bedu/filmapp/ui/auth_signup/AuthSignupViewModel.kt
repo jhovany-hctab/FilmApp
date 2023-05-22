@@ -81,6 +81,8 @@ class AuthSignupViewModel @Inject constructor(
     fun createUser() = viewModelScope.launch {
         createUserResponse.value = Response.Loading
         user.id = authUseCases.getCurrentUser()!!.uid
+        user.imageProfile = "https://netflix-bootcamp-db.netlify.app/static/media/profileIcon1.b36331ae.jpg"
+        user.imagePortedProfile = "https://i.pinimg.com/originals/42/ae/da/42aeda1e9c6ce8657c8fc8f152c7eedd.jpg"
         val result = userUseCases.userCreate(user)
         createUserResponse.value = result
     }

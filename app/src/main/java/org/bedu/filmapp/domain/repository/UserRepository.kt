@@ -7,5 +7,7 @@ import org.bedu.filmapp.domain.model.User
 interface UserRepository {
     suspend fun create(user: User): Response<Boolean>
     fun getUserById(id: String): Flow<Response<User?>>
-    fun getUsers(): Flow<Response<List<User>>>
+    fun getUsers(idUser: String): Flow<Response<List<User>>>
+    suspend fun follow(idUser: String, idUserFollowing: String): Response<Boolean>
+    suspend fun followDelete(idUser: String, idUserFollowing: String): Response<Boolean>
 }

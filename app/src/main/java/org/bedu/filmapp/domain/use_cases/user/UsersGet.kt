@@ -4,5 +4,5 @@ import org.bedu.filmapp.domain.repository.UserRepository
 import javax.inject.Inject
 
 class UsersGet @Inject constructor(private val repository: UserRepository) {
-    operator fun invoke() = repository.getUsers()
+    operator fun invoke(idUser: String) = repository.getUsers(idUser)
 }
