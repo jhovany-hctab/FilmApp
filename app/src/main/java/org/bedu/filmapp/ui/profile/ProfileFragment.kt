@@ -133,7 +133,7 @@ class ProfileFragment : Fragment() {
                                 val adapter = PostsAdapter(it.data) { post ->
                                     if (post != null) {
                                         val bundle = bundleOf("postId" to post.id)
-                                        findNavController().navigate(R.id.action_profileUsersFragment_to_postDetailsFragment, bundle)
+                                        findNavController().navigate(R.id.action_profileFragment_to_postDetailsFragment, bundle)
                                     }
                                 }
                                 myActivityRecyclerView.adapter = adapter
@@ -157,7 +157,7 @@ class ProfileFragment : Fragment() {
                                 val adapter = PostsAdapter(it.data) { post ->
                                     if (post != null) {
                                         val bundle = bundleOf("postId" to post.id)
-                                        findNavController().navigate(R.id.action_profileUsersFragment_to_postDetailsFragment, bundle)
+                                        findNavController().navigate(R.id.action_profileFragment_to_postDetailsFragment, bundle)
                                     }
                                 }
                                 myFavoriteRecyclerView.adapter = adapter
