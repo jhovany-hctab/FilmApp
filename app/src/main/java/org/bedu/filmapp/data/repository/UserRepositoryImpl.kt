@@ -9,9 +9,21 @@ import kotlinx.coroutines.tasks.await
 import org.bedu.filmapp.core.Constants.USERS
 import org.bedu.filmapp.domain.model.Response
 import org.bedu.filmapp.domain.model.User
+import org.bedu.filmapp.domain.model.WeatherResponse
 import org.bedu.filmapp.domain.repository.UserRepository
 import javax.inject.Inject
 import javax.inject.Named
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import java.io.IOException
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
+
 
 class UserRepositoryImpl @Inject constructor(
     @Named(USERS) private val collectionReference: CollectionReference
@@ -24,6 +36,28 @@ class UserRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             e.printStackTrace()
             Response.Failure(e)
+        }
+    }
+
+    override suspend fun weather(lat: Double, lon: Double): WeatherResponse {
+        val client = OkHttpClient()
+        val json = Json { ignoreUnknownKeys = true }
+        val apiKey = "b78f6b532a7e9f1d6776330a94931cad"
+        val url = "https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&appid=$apiKey&lang=es"
+        val request = Request.Builder().url(url).build()
+
+        return suspendCoroutine { continuation ->
+            client.newCall(request).enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    continuation.resumeWithException(e)
+                }
+
+                override fun onResponse(call: Call, response: okhttp3.Response) {
+                    val responseBody = response.body()?.string()
+                    val weatherResponse = json.decodeFromString<WeatherResponse>(responseBody!!)
+                    continuation.resume(weatherResponse)
+                }
+            })
         }
     }
 

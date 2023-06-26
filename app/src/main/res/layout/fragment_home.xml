@@ -35,27 +35,25 @@
                     android:layout_height="40dp"
                     android:scaleType="centerCrop"/>
         </androidx.cardview.widget.CardView>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/search_il"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Buscar"
-                app:boxStrokeErrorColor="@color/red_700"
-                app:shapeAppearance="@style/ShapeAppearance.Material3.MediumComponent"
-                app:startIconDrawable="@drawable/baseline_search_24"
-                app:startIconContentDescription=""
-                app:endIconMode="clear_text"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 >
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@id/sunny_text"
+                    app:srcCompat="@drawable/baseline_wb_sunny_24"
                     />
-
-            </com.google.android.material.textfield.TextInputLayout>
+                <TextView
+                    android:id="@+id/sunny_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
+                    />
+            </RelativeLayout>
         </LinearLayout>
 
         <TextView

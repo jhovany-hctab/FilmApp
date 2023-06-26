@@ -5,5 +5,6 @@ data class UserUseCases(
     val userById: UserGetUserById,
     val usersGet: UsersGet,
     val userFollow: UserFollow,
-    val userFollowDelete: UserFollowDelete
+    val userFollowDelete: UserFollowDelete,
+    val weatherTime: WeatherTime
 )

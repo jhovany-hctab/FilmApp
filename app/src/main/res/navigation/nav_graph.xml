@@ -42,17 +42,17 @@
             <action
                 android:id="@+id/action_homeFragment_to_postDetailsFragment"
                 app:destination="@id/postDetailsFragment"
-                app:enterAnim="@android:anim/fade_in"
-                app:exitAnim="@android:anim/fade_out"
-                app:popEnterAnim="@android:anim/fade_in"
-                app:popExitAnim="@android:anim/fade_out"/>
+                app:enterAnim="@anim/enter_right_to_left"
+                app:exitAnim="@anim/exit_left"
+                app:popEnterAnim="@anim/enter_left_to_right"
+                app:popExitAnim="@anim/exit_right"/>
             <action
                 android:id="@+id/action_homeFragment_to_profileUsersFragment"
                 app:destination="@id/profileUsersFragment"
-                app:enterAnim="@android:anim/fade_in"
-                app:exitAnim="@android:anim/fade_out"
-                app:popEnterAnim="@android:anim/fade_in"
-                app:popExitAnim="@android:anim/fade_out"/>
+                app:enterAnim="@anim/enter_right_to_left"
+                app:exitAnim="@anim/exit_left"
+                app:popEnterAnim="@anim/enter_left_to_right"
+                app:popExitAnim="@anim/exit_right"/>
         </fragment>
 
         <fragment

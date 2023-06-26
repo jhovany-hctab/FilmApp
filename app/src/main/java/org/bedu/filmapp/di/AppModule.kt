@@ -39,6 +39,7 @@ import org.bedu.filmapp.domain.use_cases.user.UserFollowDelete
 import org.bedu.filmapp.domain.use_cases.user.UserGetUserById
 import org.bedu.filmapp.domain.use_cases.user.UserUseCases
 import org.bedu.filmapp.domain.use_cases.user.UsersGet
+import org.bedu.filmapp.domain.use_cases.user.WeatherTime
 import org.checkerframework.checker.regex.qual.PolyRegex
 import javax.inject.Named
 
@@ -66,7 +67,8 @@ object AppModule {
         userById = UserGetUserById(repository),
         usersGet = UsersGet(repository),
         userFollow = UserFollow(repository),
-        userFollowDelete = UserFollowDelete(repository)
+        userFollowDelete = UserFollowDelete(repository),
+        weatherTime = WeatherTime(repository)
     )
 
     @Provides

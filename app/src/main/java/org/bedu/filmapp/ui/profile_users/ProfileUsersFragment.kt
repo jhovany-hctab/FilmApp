@@ -1,5 +1,9 @@
 package org.bedu.filmapp.ui.profile_users
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,6 +13,7 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
@@ -24,6 +29,8 @@ import kotlinx.coroutines.launch
 import org.bedu.filmapp.R
 import org.bedu.filmapp.domain.model.Response
 import org.bedu.filmapp.ui.adapter.PostsAdapter
+import org.bedu.filmapp.utils.executeOrRequestPermission
+import org.bedu.filmapp.utils.simpleNotification
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -45,6 +52,7 @@ class ProfileUsersFragment : Fragment() {
     private lateinit var portedImageView: ImageView
     private lateinit var profileImageView: ImageView
     private lateinit var nameTextView: TextView
+    private lateinit var imageUrlTextView: TextView
     private lateinit var descriptionTextView: TextView
     private lateinit var myFavoriteRecyclerView: RecyclerView
     private lateinit var myActivityRecyclerView: RecyclerView
@@ -79,6 +87,7 @@ class ProfileUsersFragment : Fragment() {
         portedImageView = view.findViewById(R.id.image_ported_iv)
         profileImageView = view.findViewById(R.id.image_profile_iv)
         nameTextView = view.findViewById(R.id.name_tv)
+        imageUrlTextView = view.findViewById(R.id.image_url)
         descriptionTextView = view.findViewById(R.id.description_tv)
         myFavoriteRecyclerView = view.findViewById(R.id.post_favorite_rv)
         myActivityRecyclerView = view.findViewById(R.id.activity_rv)
@@ -89,7 +98,21 @@ class ProfileUsersFragment : Fragment() {
         followRelativeLayout = view.findViewById(R.id.follow_btn_rl)
         followDeleteRelativeLayout = view.findViewById(R.id.follow_delete_btn_rl)
 
-        followRelativeLayout.setOnClickListener { viewModel.follow() }
+        // Para android Oreo en adelante, s obligatorio registrar el canal de notificación
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            setNotificationChannel()
+        }
+
+        followRelativeLayout.setOnClickListener {
+            viewModel.follow()
+            executeOrRequestPermission(requireActivity()) {
+                simpleNotification(
+                    requireActivity(),
+                    nameTextView.text,
+                    imageUrlTextView.text
+                )
+            }
+        }
         followDeleteRelativeLayout.setOnClickListener { viewModel.followDelete() }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -102,7 +125,10 @@ class ProfileUsersFragment : Fragment() {
                                 if (it.data?.imagePortedProfile != null && it.data?.imagePortedProfile != ""){
                                     Picasso.get().load(it.data?.imagePortedProfile).into(portedImageView)
                                 }
-                                Picasso.get().load(it.data?.imageProfile).into(profileImageView)
+                                if (it.data?.imageProfile != null && it.data?.imageProfile != ""){
+                                    Picasso.get().load(it.data?.imageProfile).into(profileImageView)
+                                    imageUrlTextView.text = it.data?.imageProfile
+                                }
                                 nameTextView.text = it.data?.username
                                 descriptionTextView.text = it.data?.description
                                 if (it.data?.follow != null){
@@ -173,7 +199,20 @@ class ProfileUsersFragment : Fragment() {
             }
         }
     }
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun setNotificationChannel(){
+        val name = getString(R.string.channel_courses)
+        val descriptionText = getString(R.string.courses_description)
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+            description = descriptionText
+        }
 
+        val notificationManager: NotificationManager =
+            requireActivity().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        notificationManager.createNotificationChannel(channel)
+    }
     companion object {
         /**
          * Use this factory method to create a new instance of
@@ -184,6 +223,7 @@ class ProfileUsersFragment : Fragment() {
          * @return A new instance of fragment ProfileUsersFragment.
          */
         // TODO: Rename and change types and number of parameters
+        const val CHANNEL_ID = "Canal de ejemplo"
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             ProfileUsersFragment().apply {

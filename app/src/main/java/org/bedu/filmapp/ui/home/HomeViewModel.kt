@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import org.bedu.filmapp.domain.model.Post
 import org.bedu.filmapp.domain.model.Response
 import org.bedu.filmapp.domain.model.User
+import org.bedu.filmapp.domain.model.WeatherResponse
 import org.bedu.filmapp.domain.use_cases.auth.AuthUseCases
 import org.bedu.filmapp.domain.use_cases.post.PostUseCases
 import org.bedu.filmapp.domain.use_cases.user.UserUseCases
@@ -26,6 +27,7 @@ class HomeViewModel @Inject constructor(
     var usersResponse = MutableStateFlow<Response<List<User>>?>(null)
     var postPopResponse = MutableStateFlow<Response<List<Post>>?>(null)
     var postFavoriteResponse = MutableStateFlow<Response<List<Post>>?>(null)
+    var sunnyTimeResponse = MutableStateFlow<WeatherResponse?>(null)
 
     val userCurrent = authUseCases.getCurrentUser()!!.uid
 
@@ -59,5 +61,10 @@ class HomeViewModel @Inject constructor(
             .collect() {
                 postFavoriteResponse.value = it
             }
+    }
+
+    fun sunnyTime(lat: Double, lon: Double) = viewModelScope.launch {
+        val result = userUseCases.weatherTime(lat, lon)
+        sunnyTimeResponse.value = result
     }
 }

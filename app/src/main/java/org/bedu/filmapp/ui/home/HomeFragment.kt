@@ -1,5 +1,6 @@
 package org.bedu.filmapp.ui.home
 
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -7,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -22,6 +24,16 @@ import org.bedu.filmapp.domain.model.Response
 import org.bedu.filmapp.ui.adapter.PostsAdapter
 import org.bedu.filmapp.ui.adapter.UsersAdapter
 import androidx.navigation.fragment.findNavController
+import com.google.android.gms.location.FusedLocationProviderClient
+import android.Manifest
+import android.annotation.SuppressLint
+import android.content.Context
+import android.location.LocationManager
+import android.widget.ProgressBar
+import android.widget.TextView
+import androidx.core.content.ContextCompat.getSystemService
+import com.google.android.gms.location.LocationServices
+import kotlinx.coroutines.flow.collect
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -46,6 +58,10 @@ class HomeFragment : Fragment() {
     private lateinit var usersShimmer: ShimmerFrameLayout
     private lateinit var postPopShimmer: ShimmerFrameLayout
     private lateinit var postFavoriteShimmer: ShimmerFrameLayout
+    private lateinit var sunnyText: TextView
+
+    //Obeto que obtiene la localización
+    private lateinit var mFusedLocationClient: FusedLocationProviderClient
 
     private val viewModel by viewModels<HomeViewModel>()
 
@@ -75,9 +91,17 @@ class HomeFragment : Fragment() {
         usersShimmer = view.findViewById(R.id.preview_user_sfl)
         postPopShimmer = view.findViewById(R.id.preview_pop_sfl)
         postFavoriteShimmer = view.findViewById(R.id.preview_favorite_sfl)
+        sunnyText = view.findViewById(R.id.sunny_text)
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        getLocation()
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.sunnyTimeResponse.collect() {
+                        sunnyText.text = "${it?.weather?.firstOrNull()?.description}"
+                    }
+                }
                 launch {
                     viewModel.userDataResponse.collect() {
                         when(it) {
@@ -176,6 +200,46 @@ class HomeFragment : Fragment() {
             }
         }
     }
+    private fun checkGranted(permission: String): Boolean{
+        return ActivityCompat.checkSelfPermission(requireContext(), permission) == PackageManager.PERMISSION_GRANTED
+    }
+    private fun checkPermissions() =
+        checkGranted(Manifest.permission.ACCESS_COARSE_LOCATION) &&
+                checkGranted(Manifest.permission.ACCESS_FINE_LOCATION)
+
+    //Pedir los permisos requeridos para que funcione la localización
+    private fun requestPermissions() {
+        ActivityCompat.requestPermissions(
+            requireActivity(),
+            arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION),
+            PERMISSION_ID
+        )
+    }
+
+    private fun isLocationEnabled(): Boolean {
+        var locationManager: LocationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
+            LocationManager.NETWORK_PROVIDER
+        )
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun getLocation() {
+        if (checkPermissions()) { //verificamos si tenemos permisos
+            if (isLocationEnabled()) { //localizamos sólo si el GPS está encendido
+
+                mFusedLocationClient.lastLocation.addOnSuccessListener(requireActivity()) { location ->
+                    viewModel.sunnyTime(location?.latitude!!, location?.longitude!!)
+                    //tvLatitude.text = location?.latitude.toString()
+                    //tvLongitude.text = location?.longitude.toString()
+
+                }
+            }
+        } else{
+            //si no se tiene permiso, pedirlo
+            requestPermissions()
+        }
+    }
 
     companion object {
         /**
@@ -187,6 +251,7 @@ class HomeFragment : Fragment() {
          * @return A new instance of fragment HomeFragment.
          */
         // TODO: Rename and change types and number of parameters
+        const val PERMISSION_ID = 33
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             HomeFragment().apply {
